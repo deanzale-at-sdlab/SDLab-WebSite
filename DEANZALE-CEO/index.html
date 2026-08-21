@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SDLab 2020™ C.E.O. Dean Zale</title>
+
+<style>
+
+
+
+
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: #000;
+}
+
+
+
+
+
+
+
+#bgVideo {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+
+    z-index: 9999;
+
+    opacity: 1;
+    transition: opacity 4s linear;
+    background: black;
+    pointer-events: none;
+}
+
+
+
+
+
+
+
+
+
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #000;
+    position: relative;
+    z-index: 1;
+}
+
+
+#startupOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10000;
+    cursor: pointer;
+}
+
+
+    /* UPDATED GIF ROW */
+    .gif-row {
+        height: 7.5%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        background: rgba(0,0,0,0.75);
+        overflow: hidden;
+    }
+
+
+
+
+
+
+#attractMessage {
+    position: absolute;
+
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+
+    color: rgba(180, 180, 180, 0.25);
+
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+
+    letter-spacing: 2px;
+text-transform: uppercase;
+
+    pointer-events: none;
+
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+
+    /* UPDATED GIF BOX */
+.gif-box {
+    position: relative;
+
+    width: 150px;
+    height: 85%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    overflow: hidden;
+    border-radius: 8px;
+    text-decoration: none;
+
+    flex: 0 0 auto;
+
+    isolation: isolate;
+}
+
+
+    /* UPDATED GIF IMAGE */
+    .gif-box img {
+
+        /* preserve original gif resolution */
+        width: auto;
+        height: auto;
+
+        max-width: none;
+        max-height: none;
+
+        image-rendering: auto;
+
+        border-radius: 8px;
+
+        /* center image */
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+.gif-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    font-family: Tahoma, Verdana, "Segoe UI", Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+
+    white-space: nowrap;
+    text-align: center;
+
+
+    /*
+    color: #00d8ff;   original light blue
+    */
+
+    color: #00e676;
+
+    pointer-events: none;
+    z-index: 2;
+
+    letter-spacing: 0.25px;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: geometricPrecision;
+
+    text-shadow:
+        -1px -1px 0 rgba(0,0,0,0.95),
+         1px -1px 0 rgba(0,0,0,0.95),
+        -1px  1px 0 rgba(0,0,0,0.95),
+         1px  1px 0 rgba(0,0,0,0.95),
+
+         0 0 4px rgba(0,216,255,0.45),
+
+         0 2px 4px rgba(0,0,0,0.95);
+
+         isolation: isolate;
+}
+
+
+
+
+
+@keyframes cyanPulse {
+
+    0% {
+        color: #00dfff;
+        text-shadow:
+            0 0 1px rgba(255,255,255,0.9),
+            0 0 4px rgba(0,229,255,0.6),
+            0 0 8px rgba(0,229,255,0.4),
+            0 2px 3px rgba(0,0,0,0.95);
+    }
+
+    50% {
+        color: #6ff7ff;
+        text-shadow:
+            0 0 2px rgba(255,255,255,1),
+            0 0 8px rgba(0,229,255,0.95),
+            0 0 18px rgba(0,229,255,0.7),
+            0 2px 3px rgba(0,0,0,0.95);
+    }
+
+    100% {
+        color: #00dfff;
+        text-shadow:
+            0 0 1px rgba(255,255,255,0.9),
+            0 0 4px rgba(0,229,255,0.6),
+            0 0 8px rgba(0,229,255,0.4),
+            0 2px 3px rgba(0,0,0,0.95);
+    }
+}
+
+
+
+@keyframes buttonShine {
+
+    0% {
+        filter: brightness(1);
+    }
+
+    50% {
+        filter: brightness(1.25);
+    }
+
+    100% {
+        filter: brightness(1);
+    }
+}
+
+    @keyframes burnWobble {
+        0% { transform: translate(-50%, -50%) rotate(-1deg) scale(1); }
+        25% { transform: translate(-49%, -51%) rotate(1deg) scale(1.02); }
+        50% { transform: translate(-50%, -50%) rotate(-0.5deg) scale(0.99); }
+        75% { transform: translate(-51%, -49%) rotate(1.5deg) scale(1.01); }
+        100% { transform: translate(-50%, -50%) rotate(-1deg) scale(1); }
+    }
+
+    @keyframes burnFlicker {
+        0% { opacity: 1; filter: blur(0px); }
+        20% { opacity: 0.85; }
+        40% { opacity: 1; filter: blur(0.3px); }
+        60% { opacity: 0.9; }
+        80% { opacity: 1; filter: blur(0px); }
+        100% { opacity: 0.95; }
+    }
+
+
+
+
+@keyframes redGlowPulse {
+
+    0% {
+        text-shadow:
+            0 1px 0 #ffffff,
+            0 2px 0 #c0c0c0,
+            0 3px 0 #8a8a8a,
+            0 4px 0 #5c5c5c,
+            0 5px 8px rgba(0,0,0,0.85),
+
+            0 0 4px rgba(255,0,0,0.35),
+            0 0 10px rgba(255,0,0,0.25),
+            0 0 18px rgba(255,0,0,0.20);
+    }
+
+    50% {
+        text-shadow:
+            0 1px 0 #ffffff,
+            0 2px 0 #c0c0c0,
+            0 3px 0 #8a8a8a,
+            0 4px 0 #5c5c5c,
+            0 5px 8px rgba(0,0,0,0.85),
+
+            0 0 8px rgba(255,0,0,0.85),
+            0 0 18px rgba(255,0,0,0.70),
+            0 0 32px rgba(255,0,0,0.55);
+    }
+
+    100% {
+        text-shadow:
+            0 1px 0 #ffffff,
+            0 2px 0 #c0c0c0,
+            0 3px 0 #8a8a8a,
+            0 4px 0 #5c5c5c,
+            0 5px 8px rgba(0,0,0,0.85),
+
+            0 0 4px rgba(255,0,0,0.35),
+            0 0 10px rgba(255,0,0,0.25),
+            0 0 18px rgba(255,0,0,0.20);
+    }
+}
+
+
+
+
+
+.meeting-title {
+    height: 7%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    text-align: center;
+    backdrop-filter: blur(4px);
+
+    margin-top: 110px;   /* increase this to push both lines down */
+}
+
+.meeting-title a {
+    font-weight: 900;
+    text-decoration: none;
+    font-size: 99px;
+
+    background: linear-gradient(
+        to bottom,
+        #9ad7ff 0%,
+        #4db8ff 20%,
+        #0077cc 45%,
+        #66ccff 70%,
+        #b3e5ff 100%
+    );
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    letter-spacing: 2px;
+
+    transform: perspective(500px)
+               rotateX(12deg);
+
+    text-shadow:
+        0 1px 0 #b3e5ff,
+        0 2px 0 #66bfff,
+        0 3px 0 #3399ff,
+        0 4px 10px rgba(0,0,0,0.7),
+        0 0 12px rgba(0,140,255,0.6);
+}
+
+
+
+.meeting-subtitle {
+    font-size: 34px;
+    font-weight: 900;
+    margin-top: 2px;
+
+    /* medium metallic gray */
+    background: linear-gradient(
+        to bottom,
+        #d0d0d0 0%,
+        #9a9a9a 35%,
+        #6e6e6e 55%,
+        #bdbdbd 75%,
+        #f0f0f0 100%
+    );
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    letter-spacing: 1px;
+
+    /* 3D perspective */
+    transform: perspective(400px) rotateX(10deg);
+
+    /* deep 3D + red glow */
+    text-shadow:
+        0 1px 0 #ffffff,
+        0 2px 0 #c0c0c0,
+        0 3px 0 #8a8a8a,
+        0 4px 0 #5c5c5c,
+        0 5px 8px rgba(0,0,0,0.85),
+
+        0 0 6px rgba(255,0,0,0.55),
+        0 0 12px rgba(255,0,0,0.45),
+        0 0 22px rgba(255,0,0,0.35);
+
+    animation: redGlowPulse 2.2s infinite ease-in-out;
+}
+
+    .middle {
+        height: 63%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .pdf-window {
+        width: 60%;
+        height: 76%;
+        background: rgba(0,0,0,0.6);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .pdf-window iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    .bottom {
+        height: 22.5%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .drive-titles {
+        display: flex;
+        height: 15%;
+        background: rgba(0,0,0,0.25);
+        backdrop-filter: blur(6px);
+    }
+
+    .drive-title {
+        width: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-size: 16px;
+        background: rgba(255,255,255,0.08);
+    }
+
+    .drive-title a {
+        color: white;
+        text-decoration: none;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .drive-content {
+        display: flex;
+        height: 85%;
+        background: rgba(0,0,0,0.15);
+        backdrop-filter: blur(6px);
+    }
+
+    .drive-panel {
+        width: 50%;
+        height: 100%;
+    }
+
+    .drive-panel iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        filter: invert(1) hue-rotate(180deg);
+        opacity: 0.85;
+    }
+</style>
+</head>
+
+<body>
+
+<!-- RANDOM VIDEO BACKGROUND -->
+<video autoplay muted id="bgVideo"></video>
+
+
+
+
+
+
+
+
+
+<div id="startupOverlay">
+    <div id="attractMessage">
+        Press the primary mouse button to access Dean Zale...
+    </div>
+</div>
+
+
+
+<div class="container">
+
+    <!-- TOP GIF ROW -->
+    <div class="gif-row">
+
+        <a class="gif-box" href="files/deanz_email_me.pdf" target="_blank">
+            <img data-src="gifs/gif1.gif">
+            <div class="gif-label">EMAIL me...</div>
+        </a>
+
+        <a class="gif-box" href="option_talktome/talk_with_me.html" target="_blank">
+            <img data-src="gifs/gif2.gif">
+            <div class="gif-label">TALK to me...</div>
+        </a>
+
+        <a class="gif-box" href="option_shootme/shoot_me.html" target="_blank">
+            <img data-src="gifs/gif3.gif">
+            <div class="gif-label">SHOOT ME!</div>
+        </a>
+
+        <a class="gif-box" href="files/deanz_detailed_live_journal.pdf" target="_blank">
+            <img data-src="gifs/gif4.gif">
+            <div class="gif-label">'Live' JOURNAL</div>
+        </a>
+
+        <a class="gif-box" href="files/deanz_regular_communication_contact_one.pdf" target="_blank">
+            <img data-src="gifs/gif5.gif">
+            <div class="gif-label">PERSON 'TWO'</div>
+        </a>
+
+        <a class="gif-box" href="files/deanz_regular_communication_contact_two.pdf" target="_blank">
+            <img data-src="gifs/gif6.gif">
+            <div class="gif-label">PERSON 'THREE'</div>
+        </a>
+
+        <a class="gif-box" href="files/deanz_regular_communication_contact_three.pdf" target="_blank">
+            <img data-src="gifs/gif7.gif">
+            <div class="gif-label">PERSON 'FOUR'</div>
+            
+        <a class="gif-box"
+           href="https://drive.google.com/drive/folders/1X_u0JEvZ5XiBPatZCRV5QnS5j2LV27K-?usp=sharing"
+           target="_blank"
+           rel="noopener noreferrer">
+            <img data-src="gifs/gif8.gif">
+            <div class="gif-label">EVERYONE ELSE...</div>
+        </a>
+
+    </div>
+
+    <!-- TITLE -->
+    <div class="meeting-title">
+        <a href="https://sdlabzos.gamer.gd/" target="_blank">
+            SDLab 2020™
+        </a>
+
+        <div class="meeting-subtitle">
+           Dean Zale C.E.O. 'next scheduled' MEETING: ATTENDEE FILES
+        </div>
+    </div>
+
+    <!-- MIDDLE PDF -->
+    <div class="middle">
+        <div class="pdf-window">
+            <iframe src="files/the_next_meeting.pdf"></iframe>
+        </div>
+    </div>
+
+    <!-- BOTTOM DRIVE -->
+    <div class="bottom">
+
+        <div class="drive-titles">
+
+            <div class="drive-title">
+                <a href="https://drive.google.com/drive/folders/1oo-rVSqIqGEjzc8WvPBrG98LNEH3KiLY">
+                    THIS MEETING 'Attached files'
+                    and 'Large File Exchange'
+                </a>
+            </div>
+
+            <div class="drive-title">
+                <a href="https://drive.google.com/drive/folders/15x3_92G5yRk1BqGf1ajOURdaGQl67n_B">
+                    MY ACTUAL 'Live Watch List'
+                    using 'zMouseOS'
+                </a>
+            </div>
+
+        </div>
+
+        <div class="drive-content">
+
+            <div class="drive-panel">
+                <iframe src="https://drive.google.com/embeddedfolderview?id=1oo-rVSqIqGEjzc8WvPBrG98LNEH3KiLY#list"></iframe>
+            </div>
+
+            <div class="drive-panel">
+                <iframe src="https://drive.google.com/embeddedfolderview?id=15x3_92G5yRk1BqGf1ajOURdaGQl67n_B#list"></iframe>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    // GIF stagger load
+    window.addEventListener("load", () => {
+
+        const gifs = document.querySelectorAll(".gif-box img");
+
+        gifs.forEach((img, i) => {
+
+            const src = img.dataset.src;
+
+            setTimeout(() => {
+                img.src = src + "?t=" + Date.now();
+            }, i * 180);
+
+        });
+
+    });
+
+    // RANDOM VIDEO SYSTEM
+    const video = document.getElementById("bgVideo");
+
+    const videoList = [];
+
+    for (let i = 1; i <= 50; i++) {
+        videoList.push(`videos/video${i}.mp4`);
+    }
+
+    let lastIndex = -1;
+
+
+
+
+
+
+
+function playRandomVideo() {
+
+    video.style.opacity = "0";
+
+    setTimeout(() => {
+
+        let randomIndex;
+
+        do {
+            randomIndex = Math.floor(Math.random() * videoList.length);
+        }
+        while (randomIndex === lastIndex);
+
+        lastIndex = randomIndex;
+
+        video.src = videoList[randomIndex];
+
+        video.playbackRate = 0.77;
+
+        video.play();
+
+        setTimeout(() => {
+            video.style.opacity = "1";
+        }, 100);
+
+    }, 4000);
+}
+
+
+
+
+
+    // START
+    playRandomVideo();
+
+    // NEXT VIDEO WHEN CURRENT ENDS
+    video.addEventListener("ended", playRandomVideo);
+
+
+
+
+
+
+const startupOverlay = document.getElementById("startupOverlay");
+
+function dismissAttractMode() {
+
+    video.pause();
+
+    video.style.display = "none";
+
+    startupOverlay.style.display = "none";
+}
+
+
+
+
+
+const attractMessage = document.getElementById("attractMessage");
+
+function moveMessage() {
+
+    if (startupOverlay.style.display === "none")
+        return;
+
+const x = 15 + Math.random() * 10;
+const y = 40 + Math.random() * 20;
+
+
+    attractMessage.style.transition =
+        (5 + Math.random() * 5) + "s linear";
+
+    attractMessage.style.left = x + "%";
+    attractMessage.style.top = y + "%";
+}
+
+moveMessage();
+
+setInterval(moveMessage, 6000);
+
+
+
+
+
+
+
+startupOverlay.addEventListener("click", dismissAttractMode);
+
+
+
+</script>
+
+</body>
+</html>
+
+
+
