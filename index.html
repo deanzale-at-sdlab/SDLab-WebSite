@@ -39,6 +39,10 @@ body {
     transition: opacity 2s ease;
 }
 
+
+
+
+
 /* ===== TOP TITLE ===== */
 .top-title {
     position: absolute;
@@ -47,24 +51,84 @@ body {
     text-align: center;
     padding: 1vh 0;
     z-index: 10;
-    border-bottom: 1px solid rgba(0,255,255,0.3);
+
+    /* Subtle silver divider */
+    border-bottom: 1px solid rgba(220, 220, 220, 0.55);
+
+    /* Helps separate the title from the photograph */
+    text-shadow:
+        0 0 4px #000000,
+        0 0 8px #000000;
 }
 
 .top-title h1 {
-    color: #00ffff;
+    color: #f2f2f2;
     font-size: 2.2vw;
-    text-shadow: 0 0 15px #00ffff;
+
+    /* Strong dark separation + silver glow */
+    text-shadow:
+        0 0 3px #000000,
+        0 0 6px #000000,
+        0 0 10px #ffffff,
+        0 0 18px #d0d0d0,
+        0 0 28px #aaaaaa;
 }
 
 .top-title h2 {
-    color: #ff0066;
+    color: #dddddd;
     font-size: 1.2vw;
+
+    /* Keeps silver text readable over bright photo areas */
+    text-shadow:
+        0 0 3px #000000,
+        0 0 6px #000000,
+        0 0 10px #ffffff,
+        0 0 16px #bdbdbd;
 }
 
 .top-title h2 .ceo {
-    color: #cc00ff;
-    text-shadow: 0 0 10px #cc00ff;
+    color: #ffffff;
+
+    /* Brighter silver-white glow */
+    text-shadow:
+        0 0 3px #000000,
+        0 0 6px #000000,
+        0 0 5px #ffffff,
+        0 0 10px #ffffff,
+        0 0 18px #d9d9d9,
+        0 0 28px #b5b5b5;
 }
+
+
+
+
+/* ===== DEAN ZALE LINK ===== */
+.top-title h2 a {
+    color: #ead0d0;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+
+    /* Enhanced red-silver glow */
+    text-shadow:
+        0 0 3px #000000,
+        0 0 6px #000000,
+        0 0 8px #ffe0e0,
+        0 0 14px #c88e8e,
+        0 0 21px #a86262;
+}
+
+.top-title h2 a:hover {
+    color: #ffffff;
+    text-shadow:
+        0 0 3px #000000,
+        0 0 6px #000000,
+        0 0 10px #ffffff,
+        0 0 18px #df9b9b,
+        0 0 27px #c56f6f;
+}
+
+
 
 
 /* ===== BOTTOM ===== */
