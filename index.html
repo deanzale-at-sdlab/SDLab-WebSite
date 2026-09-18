@@ -146,35 +146,38 @@ body {
     display: flex;
 }
 
+
 .hover-zone {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #00ffff;
     font-size: 1.2vw;
+    font-weight: 700;
     cursor: pointer;
-    background: rgba(0,255,255,0.05);
-    backdrop-filter: blur(6px);
-    border: 1px solid rgba(0,255,255,0.3);
-    transition: all 0.25s ease;
+    transition: color 0.35s ease, transform 0.25s ease;
 }
 
+
+
 .hover-zone:hover {
-    color: white;
     transform: scale(1.05);
 }
 
-/* COLORS */
-.hover-zone:nth-child(2) { color: #00ff99; }
-.hover-zone:nth-child(3) { color: #66ff00; }
-.hover-zone:nth-child(4) { color: #ffff00; }
-.hover-zone:nth-child(5) { color: #ffcc00; }
-.hover-zone:nth-child(6) { color: #ff6600; }
-.hover-zone:nth-child(7) { color: #ff0066; }
-.hover-zone:nth-child(8) { color: #cc00ff; }
-.hover-zone:nth-child(9) { color: #6600ff; }
-.hover-zone:nth-child(10){ color: #00ccff; }
+
+ /* COLORS — VIVID BUT BALANCED */
+
+.hover-zone:nth-child(1)  { color: #f0445a; }  /* FACT       - Red */
+.hover-zone:nth-child(2)  { color: #f05a45; }  /* ULTIMATE   - Red Orange */
+.hover-zone:nth-child(3)  { color: #f07845; }  /* REALISTIC  - Orange */
+.hover-zone:nth-child(4)  { color: #d99a45; }  /* WORLD      - Amber */
+.hover-zone:nth-child(5)  { color: #8fc45a; }  /* HOW        - Soft Green */
+.hover-zone:nth-child(6)  { color: #45c477; }  /* SAFE       - Green */
+.hover-zone:nth-child(7)  { color: #45c4c4; }  /* FAIR       - Teal */
+.hover-zone:nth-child(8)  { color: #4f8fd1; }  /* ZOS        - Blue */
+.hover-zone:nth-child(9)  { color: #876fc7; }  /* zBET       - Violet */
+.hover-zone:nth-child(10) { color: #c45fa3; }  /* Check-Out  - Magenta */
+
 
 /* bottom row */
 .bottom-row {
@@ -186,11 +189,93 @@ body {
     padding: 0 1vw;
 }
 
-.center-text {
-    flex: 1;
+/* ===== CENTRAL SINGLE-PAGE CONTENT ===== */
+.center-content {
+    position: absolute;
+    left: 50%;
+    top: 54%;
+    transform: translate(-50%, -50%);
+    width: min(72vw, 1050px);
+    max-height: 62vh;
+    overflow-y: auto;
     text-align: center;
-    color: #ff0066;
-    font-size: 1.2vw;
+    padding: 2.2vh 3vw;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.30);
+    border: 1px solid rgba(220, 220, 220, 0.30);
+    backdrop-filter: blur(7px);
+    text-shadow:
+        0 0 4px #000000,
+        0 0 10px #000000;
+    opacity: 1;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    z-index: 5;
+}
+
+.center-content.fade {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.98);
+}
+
+.center-content h2 {
+    margin-bottom: 1.2vh;
+    font-size: clamp(26px, 3vw, 52px);
+    color: #ffffff;
+    text-shadow:
+        0 0 4px #000000,
+        0 0 10px #000000,
+        0 0 18px rgba(255,255,255,0.7);
+}
+
+.center-content p {
+    margin: 0 auto 1.5vh;
+    max-width: 900px;
+    font-size: clamp(15px, 1.35vw, 24px);
+    line-height: 1.55;
+    color: #f2f2f2;
+}
+
+.center-content .content-subtitle {
+    font-size: clamp(14px, 1.1vw, 20px);
+    color: #dddddd;
+    margin-bottom: 1.5vh;
+}
+
+.content-images {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.2vw;
+    flex-wrap: wrap;
+    margin-top: 1.5vh;
+}
+
+.content-images img {
+    width: min(240px, 20vw);
+    max-height: 150px;
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,0.45);
+    box-shadow: 0 0 12px rgba(0,0,0,0.8);
+}
+
+.content-note {
+    margin-top: 1.2vh;
+    font-size: clamp(12px, 0.9vw, 16px);
+    color: #cccccc;
+}
+
+@media (max-width: 700px) {
+    .center-content {
+        width: 90vw;
+        top: 50%;
+        max-height: 58vh;
+        padding: 2vh 4vw;
+    }
+
+    .content-images img {
+        width: 38vw;
+        max-height: 110px;
+    }
 }
 </style>
 </head>
@@ -220,37 +305,112 @@ body {
 <!-- BOTTOM -->
 <div class="bottom-area">
     <div class="top-row">
-        <div class="hover-zone" onmouseover="setBG(1)">1</div>
-        <div class="hover-zone" onmouseover="setBG(2)">2</div>
-        <div class="hover-zone" onmouseover="setBG(3)">3</div>
-        <div class="hover-zone" onmouseover="setBG(4)">4</div>
-        <div class="hover-zone" onmouseover="setBG(5)">5</div>
-        <div class="hover-zone" onmouseover="setBG(6)">6</div>
-        <div class="hover-zone" onmouseover="setBG(7)">7</div>
-        <div class="hover-zone" onmouseover="setBG(8)">8</div>
-        <div class="hover-zone" onmouseover="setBG(9)">9</div>
-        <div class="hover-zone" onmouseover="setBG(10)">10</div>
+        <div class="hover-zone" onmouseover="setBG(1)">FACT</div>
+        <div class="hover-zone" onmouseover="setBG(2)">ULTIMATE</div>
+        <div class="hover-zone" onmouseover="setBG(3)">REALISTIC</div>
+        <div class="hover-zone" onmouseover="setBG(4)">WORLD</div>
+        <div class="hover-zone" onmouseover="setBG(5)">HOW</div>
+        <div class="hover-zone" onmouseover="setBG(6)">SAFE</div>
+        <div class="hover-zone" onmouseover="setBG(7)">FAIR</div>
+        <div class="hover-zone" onmouseover="setBG(8)">ZOS</div>
+        <div class="hover-zone" onmouseover="setBG(9)">zBET</div>
+        <div class="hover-zone" onmouseover="setBG(10)">Check-Out</div>
     </div>
 
     <div class="bottom-row">
         <div></div>
-        <div class="center-text" id="centerText"></div>
+        <div></div>
         <div></div>
     </div>
 </div>
 
+<!-- SINGLE-PAGE CONTENT AREA
+     This one area changes to imitate 10 separate web pages. -->
+<div class="center-content" id="centerContent">
+    <h2 id="contentTitle">WELCOME TO THE 'ZOS'<br>Mouse Operating System</h2>
+    <div class="content-subtitle" id="contentSubtitle">
+        Explore a complete overview by hovering over any of the 10 options below...
+    </div>
+    <p id="contentDescription">
+        At SDLab we never want to waste your time...<br>So you only need to stay here if:<br>1- You want to play open world games without a keyboard<br>2- Want to access High Resolution movies on your network with just a mouse and no chromecast web shit! How 'STUPID' is it to use WIFI to watch a local file??<br>3- Torrent user wanting to find and run any file on your network with just a mouse<br>4- With no sport bet knowledge, take money from betting agency thieving cunts,<br>5- Use zones (not error prone file paths) in your Microsoft Windows network
+    </p>
+    <div class="content-images" id="contentImages"></div>
+    <div class="content-note" id="contentNote"></div>
+</div>
+</div>
+
 <script>
-const bottomTexts = [
-"NO SUCH THING AS A GAMING KEYBOARD!",
-"OPEN WORLD ADVENTURING immersion update",
-"Dual mouse control system",
-"ZOS flat screen innovation",
-"VR & AR already perfect",
-"ARMA with no keyboard",
-"DAYZ with no keyboard",
-"ZOS media system",
-"ZOS for workstations",
-"Ultimate ZOS system"
+const pageContent = [
+    {
+        title: "NO SUCH THING AS A GAMING KEYBOARD!",
+        subtitle: "ZOS 'NO KEYBOARD' OPERATING SYSTEM",
+        description: "This section introduces the ZOS concept of interacting with an open-world gaming environment without relying on a conventional gaming keyboard.",
+        images: ["images/page1-1.jpg", "images/page1-2.jpg"],
+        note: "Add your own page 1 images using these filenames."
+    },
+    {
+        title: "OPEN WORLD ADVENTURING",
+        subtitle: "IMMERSION UPDATE",
+        description: "A dedicated ZOS concept for open-world adventuring and a more immersive style of interaction.",
+        images: ["images/page2-1.jpg", "images/page2-2.jpg"],
+        note: "Add your own page 2 images using these filenames."
+    },
+    {
+        title: "DUAL MOUSE CONTROL SYSTEM",
+        subtitle: "ALTERNATIVE CONTROL CONCEPT",
+        description: "A ZOS control concept centred around dual-mouse interaction rather than traditional keyboard-based control.",
+        images: ["images/page3-1.jpg", "images/page3-2.jpg"],
+        note: "Add your own page 3 images using these filenames."
+    },
+    {
+        title: "ZOS FLAT SCREEN INNOVATION",
+        subtitle: "DISPLAY & INTERACTION",
+        description: "A ZOS concept exploring the use of flat-screen displays as part of the overall operating and interaction environment.",
+        images: ["images/page4-1.jpg", "images/page4-2.jpg"],
+        note: "Add your own page 4 images using these filenames."
+    },
+    {
+        title: "VR & AR ALREADY PERFECT",
+        subtitle: "VIRTUAL & AUGMENTED REALITY",
+        description: "A section dedicated to the ZOS view of VR and AR experiences and how they can fit into the wider system.",
+        images: ["images/page5-1.jpg", "images/page5-2.jpg"],
+        note: "Add your own page 5 images using these filenames."
+    },
+    {
+        title: "ARMA WITH NO KEYBOARD",
+        subtitle: "ZOS CONTROL CONCEPT",
+        description: "A ZOS concept for playing ARMA while reducing or removing dependence on the traditional keyboard.",
+        images: ["images/page6-1.jpg", "images/page6-2.jpg"],
+        note: "Add your own page 6 images using these filenames."
+    },
+    {
+        title: "DAYZ WITH NO KEYBOARD",
+        subtitle: "ZOS CONTROL CONCEPT",
+        description: "A ZOS concept for the DAYZ environment using an alternative interaction model without a conventional gaming keyboard.",
+        images: ["images/page7-1.jpg", "images/page7-2.jpg"],
+        note: "Add your own page 7 images using these filenames."
+    },
+    {
+        title: "ZOS MEDIA SYSTEM",
+        subtitle: "MEDIA & ENTERTAINMENT",
+        description: "A ZOS media-system concept bringing media and entertainment functions into the same single operating environment.",
+        images: ["images/page8-1.jpg", "images/page8-2.jpg"],
+        note: "Add your own page 8 images using these filenames."
+    },
+    {
+        title: "ZOS FOR WORKSTATIONS",
+        subtitle: "WORKSTATION ENVIRONMENT",
+        description: "A ZOS concept for workstation use, extending the same alternative interaction philosophy beyond gaming.",
+        images: ["images/page9-1.jpg", "images/page9-2.jpg"],
+        note: "Add your own page 9 images using these filenames."
+    },
+    {
+        title: "ULTIMATE ZOS SYSTEM",
+        subtitle: "THE COMPLETE CONCEPT",
+        description: "The final section brings together the ZOS ideas presented throughout the ten sections into one overall system concept.",
+        images: ["images/page10-1.jpg", "images/page10-2.jpg"],
+        note: "Add your own page 10 images using these filenames."
+    }
 ];
 
 const videoBG = document.getElementById("videoBG");
@@ -337,10 +497,42 @@ function stopVideoMode() {
 /* MAIN */
 function setBG(num) {
     const body = document.getElementById("body");
-    const centerText = document.getElementById("centerText");
+    const centerContent = document.getElementById("centerContent");
+    const contentTitle = document.getElementById("contentTitle");
+    const contentSubtitle = document.getElementById("contentSubtitle");
+    const contentDescription = document.getElementById("contentDescription");
+    const contentImages = document.getElementById("contentImages");
+    const contentNote = document.getElementById("contentNote");
 
-    centerText.textContent = bottomTexts[num - 1];
+    const page = pageContent[num - 1];
+    if (!page) return;
 
+    // Fade the central "page" content before changing it.
+    centerContent.classList.add("fade");
+
+    setTimeout(() => {
+        contentTitle.textContent = page.title;
+        contentSubtitle.textContent = page.subtitle;
+        contentDescription.textContent = page.description;
+        contentNote.textContent = page.note;
+
+        // Build the small image area for this section.
+        contentImages.innerHTML = "";
+
+        page.images.forEach(imagePath => {
+            const img = document.createElement("img");
+            img.src = imagePath;
+            img.alt = page.title;
+            img.onerror = function () {
+                this.style.display = "none";
+            };
+            contentImages.appendChild(img);
+        });
+
+        centerContent.classList.remove("fade");
+    }, 180);
+
+    // Keep your existing background/video behaviour.
     if (num === 1) {
         startVideoMode();
     } else {
