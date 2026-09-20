@@ -133,29 +133,36 @@ body {
 
 /* ===== BOTTOM ===== */
 .bottom-area {
-    position: absolute;
+    position: fixed;
     bottom: 0;
+    left: 0;
     width: 100%;
-    height: 10vh;
+    height: 7vh;
     display: flex;
     flex-direction: column;
+    z-index: 20;
 }
 
 .top-row {
-    flex: 7;
+    width: 100%;
+    height: 100%;
     display: flex;
+    align-items: flex-end;
 }
 
 
 .hover-zone {
-    flex: 1;
+    flex: 1 1 10%;
+    min-width: 0;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2vw;
+    font-size: clamp(10px, 1.05vw, 18px);
     font-weight: 700;
     cursor: pointer;
     transition: color 0.35s ease, transform 0.25s ease;
+    white-space: nowrap;
 }
 
 
@@ -165,28 +172,62 @@ body {
 }
 
 
- /* COLORS — VIVID BUT BALANCED */
+ /* COLORS — BLUE TEXT WITH ORIGINAL-COLOR GLOW */
 
-.hover-zone:nth-child(1)  { color: #f0445a; }  /* FACT       - Red */
-.hover-zone:nth-child(2)  { color: #f05a45; }  /* ULTIMATE   - Red Orange */
-.hover-zone:nth-child(3)  { color: #f07845; }  /* REALISTIC  - Orange */
-.hover-zone:nth-child(4)  { color: #d99a45; }  /* WORLD      - Amber */
-.hover-zone:nth-child(5)  { color: #8fc45a; }  /* HOW        - Soft Green */
-.hover-zone:nth-child(6)  { color: #45c477; }  /* SAFE       - Green */
-.hover-zone:nth-child(7)  { color: #45c4c4; }  /* FAIR       - Teal */
-.hover-zone:nth-child(8)  { color: #4f8fd1; }  /* ZOS        - Blue */
-.hover-zone:nth-child(9)  { color: #876fc7; }  /* zBET       - Violet */
-.hover-zone:nth-child(10) { color: #c45fa3; }  /* Check-Out  - Magenta */
+.hover-zone:nth-child(1) {
+    color: #000000;
+    text-shadow: 0 0 4px #f0445a, 0 0 9px #f0445a, 0 0 16px rgba(240,68,90,0.85);
+}
+
+.hover-zone:nth-child(2) {
+    color: #000000;
+    text-shadow: 0 0 4px #f05a45, 0 0 9px #f05a45, 0 0 16px rgba(240,90,69,0.85);
+}
+
+.hover-zone:nth-child(3) {
+    color: #000000;
+    text-shadow: 0 0 4px #f07845, 0 0 9px #f07845, 0 0 16px rgba(240,120,69,0.85);
+}
+
+.hover-zone:nth-child(4) {
+    color: #000000;
+    text-shadow: 0 0 4px #d99a45, 0 0 9px #d99a45, 0 0 16px rgba(217,154,69,0.85);
+}
+
+.hover-zone:nth-child(5) {
+    color: #000000;
+    text-shadow: 0 0 4px #8fc45a, 0 0 9px #8fc45a, 0 0 16px rgba(143,196,90,0.85);
+}
+
+.hover-zone:nth-child(6) {
+    color: #000000;
+    text-shadow: 0 0 4px #45c477, 0 0 9px #45c477, 0 0 16px rgba(69,196,119,0.85);
+}
+
+.hover-zone:nth-child(7) {
+    color: #000000;
+    text-shadow: 0 0 4px #45c4c4, 0 0 9px #45c4c4, 0 0 16px rgba(69,196,196,0.85);
+}
+
+.hover-zone:nth-child(8) {
+    color: #000000;
+    text-shadow: 0 0 4px #4f8fd1, 0 0 9px #4f8fd1, 0 0 16px rgba(79,143,209,0.9);
+}
+
+.hover-zone:nth-child(9) {
+    color: #000000;
+    text-shadow: 0 0 4px #876fc7, 0 0 9px #876fc7, 0 0 16px rgba(135,111,199,0.9);
+}
+
+.hover-zone:nth-child(10) {
+    color: #000000;
+    text-shadow: 0 0 4px #c45fa3, 0 0 9px #c45fa3, 0 0 16px rgba(196,95,163,0.9);
+}
 
 
 /* bottom row */
 .bottom-row {
-    flex: 4;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: black;
-    padding: 0 1vw;
+    display: none;
 }
 
 /* ===== CENTRAL SINGLE-PAGE CONTENT ===== */
@@ -307,12 +348,12 @@ body {
     <div class="top-row">
         <div class="hover-zone" onmouseover="setBG(1)">FACT</div>
         <div class="hover-zone" onmouseover="setBG(2)">ULTIMATE</div>
-        <div class="hover-zone" onmouseover="setBG(3)">REALISTIC</div>
-        <div class="hover-zone" onmouseover="setBG(4)">WORLD</div>
-        <div class="hover-zone" onmouseover="setBG(5)">HOW</div>
-        <div class="hover-zone" onmouseover="setBG(6)">SAFE</div>
-        <div class="hover-zone" onmouseover="setBG(7)">FAIR</div>
-        <div class="hover-zone" onmouseover="setBG(8)">ZOS</div>
+        <div class="hover-zone" onmouseover="setBG(3)">PERFECTION</div>
+        <div class="hover-zone" onmouseover="setBG(4)">MOUSE</div>
+        <div class="hover-zone" onmouseover="setBG(5)">zGAMER-Mods</div>
+        <div class="hover-zone" onmouseover="setBG(6)">ZOS</div>
+        <div class="hover-zone" onmouseover="setBG(7)">zMouseOS</div>
+        <div class="hover-zone" onmouseover="setBG(8)">zManagerOS</div>
         <div class="hover-zone" onmouseover="setBG(9)">zBET</div>
         <div class="hover-zone" onmouseover="setBG(10)">Check-Out</div>
     </div>
@@ -332,7 +373,7 @@ body {
         Explore a complete overview by hovering over any of the 10 options below...
     </div>
     <p id="contentDescription">
-        At SDLab we never want to waste your time...<br>So you only need to stay here if:<br>1- You want to play open world games without a keyboard<br>2- Want to access High Resolution movies on your network with just a mouse and no chromecast web shit! How 'STUPID' is it to use WIFI to watch a local file??<br>3- Torrent user wanting to find and run any file on your network with just a mouse<br>4- With no sport bet knowledge, take money from betting agency thieving cunts,<br>5- Use zones (not error prone file paths) in your Microsoft Windows network
+        At SDLab we never want to waste your time...<br>So you only need to stay here if:<br>1- You want to play flat screen open world games without a keyboard<br>2- Want to enjoy 8K 4K high resolution movies on your network using just a mouse and no idiotic Wi-Fi shit! How 'STUPID' is it to use WIFI to watch a local file?!?<br>3- Torrent user wanting to find and run any file on your network with just a mouse<br>4- Without any sport bet knowledge take money<br>from BET365 and other betting agency thieving cunts like them<br>5- Use zones (not error prone file paths) on your Microsoft Windows network<br>6- Our gamer applications just for open world wanderers, survivalists, adventurers, not PVP people whose 'needs' and 'drives' are not of interest to us. 
     </p>
     <div class="content-images" id="contentImages"></div>
     <div class="content-note" id="contentNote"></div>
@@ -342,72 +383,72 @@ body {
 <script>
 const pageContent = [
     {
-        title: "NO SUCH THING AS A GAMING KEYBOARD!",
+        title: "THERE IS NO SUCH THING AS A GAMING KEYBOARD!",
         subtitle: "ZOS 'NO KEYBOARD' OPERATING SYSTEM",
-        description: "This section introduces the ZOS concept of interacting with an open-world gaming environment without relying on a conventional gaming keyboard.",
+        description: "ZOS introduces a new approach to open-world gaming that removes the need for a conventional gaming keyboard. Instead, players interact using controllers, joysticks, arcade-style button pads, switches, dials, and other specialized physical controls. These can be customized and arranged to suit different games and individual preferences, making interaction more intuitive and reducing complex keyboard commands. This is particularly valuable in open-world environments, where players may control movement, vehicles, tools, and numerous actions. Purpose-built interfaces can provide dedicated controls for driving, flight, combat, or other experiences. ZOS creates a more natural, flexible, immersive, engaging, and accessible way to interact with virtual worlds.",
         images: ["images/page1-1.jpg", "images/page1-2.jpg"],
         note: "Add your own page 1 images using these filenames."
     },
     {
-        title: "OPEN WORLD ADVENTURING",
-        subtitle: "IMMERSION UPDATE",
-        description: "A dedicated ZOS concept for open-world adventuring and a more immersive style of interaction.",
+        title: "OPEN WORLD IMMERSION",
+        subtitle: "Body sensors the ultimate but joysticks and controllers and mouses next best!",
+        description: "ZOS introduces a more immersive approach to open-world adventuring without requiring expensive body suits, motion sensors, or specialized tracking equipment. Instead, the experience is built around practical, accessible controls such as game controllers, arcade-style button pads, joysticks, and even two mice—one in each hand—while completely eliminating the traditional keyboard. This combination provides a wide range of physical inputs while remaining affordable and adaptable. With controls dedicated to movement, interaction, combat, exploration, and other actions, players can wander freely through enormous open worlds without being restricted by conventional keyboard controls. The result is a more physical, intuitive, and engaging style of exploration, allowing the player to simply get lost in the world and experience the adventure.",
         images: ["images/page2-1.jpg", "images/page2-2.jpg"],
         note: "Add your own page 2 images using these filenames."
     },
     {
-        title: "DUAL MOUSE CONTROL SYSTEM",
-        subtitle: "ALTERNATIVE CONTROL CONCEPT",
-        description: "A ZOS control concept centred around dual-mouse interaction rather than traditional keyboard-based control.",
+        title: "VR ALREADY PERFECT IMMERSION",
+        subtitle: "We love VR but we also love our big flat screens too, so no keyboards allowed or wanted.",
+        description: "At SDLab 2020, we love VR for its incredible immersion, but we also believe a large flat screen, wall display, or projector can deliver an equally engaging open-world experience without a fucked keyboard. The key is removing the keyboard from the equation. Traditional keyboards can break immersion by forcing players to look down, search for keys, and think about controls instead of the world around them. ZOS replaces the keyboard with controllers, joysticks, arcade-style button pads, and other dedicated physical controls, allowing players to remain focused on the game. With a huge screen or projector filling the player's view and intuitive controls in their hands, open-world gaming can become a deeply immersive experience without VR.",
         images: ["images/page3-1.jpg", "images/page3-2.jpg"],
         note: "Add your own page 3 images using these filenames."
     },
     {
-        title: "ZOS FLAT SCREEN INNOVATION",
-        subtitle: "DISPLAY & INTERACTION",
-        description: "A ZOS concept exploring the use of flat-screen displays as part of the overall operating and interaction environment.",
+        title: "THE MOUSE IS THE GREATEST",
+        subtitle: "Regarding only the world established standard default computer system, the mouse the smoothest, most fluid, and greatest controller",
+        description: "At SDLab 2020, we consider the mouse the smoothest, most fluid, and natural controller within the standard computer system. Unlike keyboards, the mouse provides precise, continuous control that can feel remarkably intuitive and responsive, making it one of the closest conventional interfaces to the freedom of expensive VR motion-sensing systems. For this reason, ZOS gives the mouse Priority 1 and places it at the foundation of our interaction philosophy. Our R&D team is also developing specialized innovations to expand what the mouse can achieve, making it an even more powerful interface. The mouse therefore becomes the core control device behind our ZOS Mouse Operating System applications and a fundamental part of our vision for computer interaction.",
         images: ["images/page4-1.jpg", "images/page4-2.jpg"],
         note: "Add your own page 4 images using these filenames."
     },
     {
-        title: "VR & AR ALREADY PERFECT",
-        subtitle: "VIRTUAL & AUGMENTED REALITY",
-        description: "A section dedicated to the ZOS view of VR and AR experiences and how they can fit into the wider system.",
+        title: "START WITH BEST: ARMA & DAYZ",
+        subtitle: "So many amazing beautiful open world simulations already out there, but we are starting our mission of 'keyboard removal' with the brilliant, most complex strategy logic, most real ones first: DAYZ and ARMA",
+        description: "SDLab 2020 begins with two of the most complex and realistic open-world experiences: **ARMA and DAYZ**. Rather than following artificial tasks, arrows, or constant instructions, these games provide expansive environments where players can choose where to go and what to do, creating highly immersive human and strategic simulations. ZOS gives these experiences priority because their open-ended realism makes them ideal for eliminating the traditional keyboard and replacing it with more intuitive controls. By removing a major source of immersion-breaking interaction and introducing dedicated controllers, mice, joysticks, and arcade-style controls, ZOS aims to make the already extraordinary ARMA and DAYZ open worlds feel dramatically more immersive and natural.",
         images: ["images/page5-1.jpg", "images/page5-2.jpg"],
         note: "Add your own page 5 images using these filenames."
     },
     {
-        title: "ARMA WITH NO KEYBOARD",
-        subtitle: "ZOS CONTROL CONCEPT",
-        description: "A ZOS concept for playing ARMA while reducing or removing dependence on the traditional keyboard.",
+        title: "'ZOS' Mouse Operating System",
+        subtitle: "Our business plan is to build a mouse only, no keyboard, Operating System! These ZOS applications and tools are the coding birth point of this mission, eventually creating a full OS that locks out all keyboards!",
+        description: "The ZOS vision is to create a mouse-only operating system with no keyboard, and the applications developed within SDLab 2020 represent the foundation of that mission. Designed for practical everyday use, ZOS already demonstrates how powerful a mouse can be as the primary interface, particularly when controlling a large-screen media system from across the room. Users can search and access files anywhere across the network, as well as move and delete media, without relying on traditional file paths. Instead, ZOS uses intuitive zones that allow network content to remain discoverable even when folders are moved or reorganized. These applications form the beginning of a broader vision to make computer interaction simpler, more fluid, and completely free from the bullshit keyboard.",
         images: ["images/page6-1.jpg", "images/page6-2.jpg"],
         note: "Add your own page 6 images using these filenames."
     },
     {
-        title: "DAYZ WITH NO KEYBOARD",
-        subtitle: "ZOS CONTROL CONCEPT",
-        description: "A ZOS concept for the DAYZ environment using an alternative interaction model without a conventional gaming keyboard.",
+        title: "'zMouseOS' Application",
+        subtitle: "The core application we created that will become a fully fledged mouse driven 'no keyboard' Operating System.",
+        description: "SDLab 2020’s **zMouseOS** is a mouse-only application system designed as the foundation for a fully fledged, no-keyboard operating system. With nothing more than a mouse—even from across the room—users can search thousands of files across their network, launch applications or media, access internet links, and manage content without relying on traditional keyboard controls or complicated file paths. Designed especially for large-screen media systems, zMouseOS provides direct access to locally stored content, including large, high-resolution media files, without requiring unnecessary streaming or wireless workarounds. By accessing network files directly rather than forcing locally stored media through conventional casting systems, zMouseOS aims to deliver a faster, simpler, and more direct way to control and experience digital content.",
         images: ["images/page7-1.jpg", "images/page7-2.jpg"],
         note: "Add your own page 7 images using these filenames."
     },
     {
-        title: "ZOS MEDIA SYSTEM",
-        subtitle: "MEDIA & ENTERTAINMENT",
-        description: "A ZOS media-system concept bringing media and entertainment functions into the same single operating environment.",
+        title: "'zManagerOS' Application",
+        subtitle: "Replaces bit by bit, everything the Operating System does. But until that day, with your keyboard still of use in your Operating System, quickly complete many network tasks.",
+        description: "**zManagerOS** is designed to progressively replace many of the everyday functions normally handled by a traditional operating system, while already providing powerful network management tools alongside the existing keyboard-based environment. It can archive and organise huge collections of files, identify duplicates, rename builds with dates, encrypt files independently of BitLocker, and reliably copy or move content without the limitations and path errors often encountered with conventional Windows file management. Its most distinctive feature is its **zone-based approach**, allowing files and folders to be found and managed by logical zones rather than fixed operating-system paths. This creates a more flexible way to structure, search, and manage large networks, reducing dependence on traditional file paths and providing a foundation for the broader ZOS no-keyboard operating-system vision.",
         images: ["images/page8-1.jpg", "images/page8-2.jpg"],
         note: "Add your own page 8 images using these filenames."
     },
     {
-        title: "ZOS FOR WORKSTATIONS",
-        subtitle: "WORKSTATION ENVIRONMENT",
-        description: "A ZOS concept for workstation use, extending the same alternative interaction philosophy beyond gaming.",
+        title: "'zBET MANAGER' Application",
+        subtitle: "We do not touch your money in any way! All betting is accomplished by detailing your next sport bet and amount (this is critical) at an internet location, and so you can bet on exactly what we bet on.",
+        description: "zBET MANAGER is a sports-betting information and management system designed to analyse large volumes of sporting data and determine specific betting selections and wager sizes. **We do not touch, hold, or access your money in any way.** When a bet is identified, the application provides the sport, event, match and exact wager amount/units. You then use your own preferred internet betting location to place **exactly the bet specified by zBET MANAGER**. Strict wager control is essential, with bet sizing adjusted according to the current betting round, wins, losses and recovery position. The system is supported by extensive relational databases, statistical analysis and automated pattern recognition.",
         images: ["images/page9-1.jpg", "images/page9-2.jpg"],
         note: "Add your own page 9 images using these filenames."
     },
     {
-        title: "ULTIMATE ZOS SYSTEM",
-        subtitle: "THE COMPLETE CONCEPT",
-        description: "The final section brings together the ZOS ideas presented throughout the ten sections into one overall system concept.",
+        title: "SDLab 2020 COMPANY MAP MENU",
+        subtitle: "For convenience, should you find our company website has what you want, all pertinent links are here...",
+        description: "This **MAP TO EVERYTHING SDLab 2020 OFFERS** brings together the complete ZOS vision and the applications developed from it. Starting with the removal of the traditional keyboard from open-world gaming, the concept progresses through immersive physical controls, mouse-first computer interaction, **zMouseOS**, **zManagerOS**, network-based file management, and **zBET MANAGER**. Each application represents a practical part of the broader ZOS philosophy: simpler, more direct and flexible interaction with computers, games, media, networks and information. This final section provides a convenient map to the relevant SDLab 2020 resources, allowing visitors to move directly to the areas that match what they are looking for. ||||| deanzale.sdlab.software ||||| dean-zale.sdlab.software ||||| buy.sdlab.software ||||| gamingfriends.sdlab.software ||||| support.sdlab.software ||||| trial.sdlab.software ||||| zbet.sdlab.software ||||| zos.sdlab.software |||||",
         images: ["images/page10-1.jpg", "images/page10-2.jpg"],
         note: "Add your own page 10 images using these filenames."
     }
@@ -422,6 +463,7 @@ let next = vidB;
 
 let videoMode = false;
 let timer = null;
+let contentChangeTimer = null;
 
 const videoList = [];
 for (let i = 1; i <= 50; i++) {
@@ -507,10 +549,13 @@ function setBG(num) {
     const page = pageContent[num - 1];
     if (!page) return;
 
-    // Fade the central "page" content before changing it.
+    // Fade the central content immediately, then wait 3 seconds
+    // before displaying the newly selected section.
     centerContent.classList.add("fade");
 
-    setTimeout(() => {
+    clearTimeout(contentChangeTimer);
+
+    contentChangeTimer = setTimeout(() => {
         contentTitle.textContent = page.title;
         contentSubtitle.textContent = page.subtitle;
         contentDescription.textContent = page.description;
@@ -530,7 +575,7 @@ function setBG(num) {
         });
 
         centerContent.classList.remove("fade");
-    }, 180);
+    }, 3000);
 
     // Keep your existing background/video behaviour.
     if (num === 1) {
