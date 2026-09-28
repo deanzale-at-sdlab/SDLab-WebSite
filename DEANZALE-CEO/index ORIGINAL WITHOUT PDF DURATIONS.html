@@ -196,32 +196,6 @@ text-transform: uppercase;
 }
 
 
-/* PDF MODIFIED-AGE TEXT */
-.pdf-age {
-    position: absolute;
-    top: 72%;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 3;
-
-    color: #00e676;
-    font-family: Tahoma, Verdana, "Segoe UI", Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-    text-align: center;
-    pointer-events: none;
-
-    text-shadow:
-        -1px -1px 0 rgba(0,0,0,0.95),
-         1px -1px 0 rgba(0,0,0,0.95),
-        -1px  1px 0 rgba(0,0,0,0.95),
-         1px  1px 0 rgba(0,0,0,0.95),
-         0 0 4px rgba(0,230,118,0.45),
-         0 2px 4px rgba(0,0,0,0.95);
-}
-
-
 
 
 
@@ -522,10 +496,9 @@ text-transform: uppercase;
     <!-- TOP GIF ROW -->
     <div class="gif-row">
 
-        <a class="gif-box" href="files/deanz_email_me.pdf" target="_blank" data-pdf-age>
+        <a class="gif-box" href="files/deanz_email_me.pdf" target="_blank">
             <img data-src="gifs/gif1.gif">
             <div class="gif-label">EMAIL me...</div>
-            <div class="pdf-age">checking modified time...</div>
         </a>
 
         <a class="gif-box" href="option_talktome/talk_with_me.html" target="_blank">
@@ -538,28 +511,24 @@ text-transform: uppercase;
             <div class="gif-label">SHOOT ME!</div>
         </a>
 
-        <a class="gif-box" href="files/deanz_detailed_live_journal.pdf" target="_blank" data-pdf-age>
+        <a class="gif-box" href="files/deanz_detailed_live_journal.pdf" target="_blank">
             <img data-src="gifs/gif4.gif">
             <div class="gif-label">'Live' JOURNAL</div>
-            <div class="pdf-age">checking modified time...</div>
         </a>
 
-        <a class="gif-box" href="files/deanz_regular_communication_contact_one.pdf" target="_blank" data-pdf-age>
+        <a class="gif-box" href="files/deanz_regular_communication_contact_one.pdf" target="_blank">
             <img data-src="gifs/gif5.gif">
             <div class="gif-label">PERSON 'TWO'</div>
-            <div class="pdf-age">checking modified time...</div>
         </a>
 
-        <a class="gif-box" href="files/deanz_regular_communication_contact_two.pdf" target="_blank" data-pdf-age>
+        <a class="gif-box" href="files/deanz_regular_communication_contact_two.pdf" target="_blank">
             <img data-src="gifs/gif6.gif">
             <div class="gif-label">PERSON 'THREE'</div>
-            <div class="pdf-age">checking modified time...</div>
         </a>
 
-        <a class="gif-box" href="files/deanz_regular_communication_contact_three.pdf" target="_blank" data-pdf-age>
+        <a class="gif-box" href="files/deanz_regular_communication_contact_three.pdf" target="_blank">
             <img data-src="gifs/gif7.gif">
             <div class="gif-label">PERSON 'FOUR'</div>
-            <div class="pdf-age">checking modified time...</div>
             
         <a class="gif-box"
            href="https://drive.google.com/drive/folders/1X_u0JEvZ5XiBPatZCRV5QnS5j2LV27K-?usp=sharing"
@@ -644,167 +613,6 @@ text-transform: uppercase;
         });
 
     });
-
-    // PDF MODIFIED-AGE DISPLAY
-    // Reads the PDF's own embedded /ModDate metadata.
-    // This avoids relying on GitHub or the server's Last-Modified header.
-
-    function formatPdfAge(modifiedTime) {
-        const modified = new Date(modifiedTime);
-        const now = new Date();
-
-        if (isNaN(modified.getTime())) {
-            return "modified time unavailable";
-        }
-
-        let seconds = Math.floor((now - modified) / 1000);
-
-        if (seconds < 0) seconds = 0;
-
-        const minutes = Math.floor(seconds / 60);
-        const hours = Math.floor(minutes / 60);
-        const days = Math.floor(hours / 24);
-        const weeks = Math.floor(days / 7);
-        const months = Math.floor(days / 30);
-        const years = Math.floor(days / 365);
-
-        if (years > 0)
-            return years + (years === 1 ? " year ago" : " years ago");
-
-        if (months > 0)
-            return months + (months === 1 ? " month ago" : " months ago");
-
-        if (weeks > 0)
-            return weeks + (weeks === 1 ? " week ago" : " weeks ago");
-
-        if (days > 0)
-            return days + (days === 1 ? " day ago" : " days ago");
-
-        if (hours > 0)
-            return hours + (hours === 1 ? " hour ago" : " hours ago");
-
-        return minutes + (minutes === 1 ? " minute ago" : " minutes ago");
-    }
-
-    function parsePdfDate(value) {
-        // PDF date format: D:YYYYMMDDHHmmSS+HH'mm'
-        // or:            D:YYYYMMDDHHmmSSZ
-        const match = value.match(
-            /D:(\d{4})(\d{2})?(\d{2})?(\d{2})?(\d{2})?(\d{2})?(Z|[+-]\d{2}'?\d{2}'?)?/
-        );
-
-        if (!match) return null;
-
-        const year = Number(match[1]);
-        const month = Number(match[2] || 1) - 1;
-        const day = Number(match[3] || 1);
-        const hour = Number(match[4] || 0);
-        const minute = Number(match[5] || 0);
-        const second = Number(match[6] || 0);
-
-        let date = new Date(Date.UTC(year, month, day, hour, minute, second));
-
-        const zone = match[7];
-        if (zone && zone !== "Z") {
-            const zoneMatch = zone.match(/([+-])(\d{2})'?\s*(\d{2})'?/);
-            if (zoneMatch) {
-                const offsetMinutes =
-                    (Number(zoneMatch[2]) * 60 + Number(zoneMatch[3])) *
-                    (zoneMatch[1] === "+" ? 1 : -1);
-                date = new Date(date.getTime() - offsetMinutes * 60000);
-            }
-        }
-
-        return isNaN(date.getTime()) ? null : date;
-    }
-
-    async function getPdfEmbeddedModifiedDate(pdfUrl) {
-        const response = await fetch(pdfUrl + (pdfUrl.includes("?") ? "&" : "?") + "_pdfcheck=" + Date.now(), {
-            method: "GET",
-            cache: "no-store"
-        });
-
-        if (!response.ok)
-            throw new Error("PDF could not be read");
-
-        const buffer = await response.arrayBuffer();
-        const bytes = new Uint8Array(buffer);
-
-        // Convert only the text-like PDF objects to a string.
-        // PDF metadata is normally stored in the first part of the file.
-        const sample = new TextDecoder("latin1").decode(bytes.slice(0, Math.min(bytes.length, 1000000)));
-
-        const matches = [
-            sample.match(/\/ModDate\s*\((D:[^)]*)\)/),
-            sample.match(/\/ModDate\s*<([0-9A-Fa-f]+)>/)
-        ];
-
-        if (matches[0]) {
-            return parsePdfDate(matches[0][1]);
-        }
-
-        if (matches[1]) {
-            // UTF-16 hexadecimal PDF metadata, if present.
-            try {
-                const hex = matches[1][1];
-                let text = "";
-                for (let i = 0; i < hex.length; i += 2) {
-                    text += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-                }
-                const match = text.match(/D:\d{4}[^\x00]*/);
-                if (match) return parsePdfDate(match[0]);
-            } catch (e) {}
-        }
-
-        return null;
-    }
-
-    async function getPdfModifiedDate(pdfUrl) {
-        // First try the server's Last-Modified header.
-        try {
-            const head = await fetch(pdfUrl, {
-                method: "HEAD",
-                cache: "no-store"
-            });
-
-            const lastModified = head.headers.get("Last-Modified");
-            if (lastModified) return new Date(lastModified);
-        } catch (e) {}
-
-        // If the server does not expose it, read the PDF's own metadata.
-        return await getPdfEmbeddedModifiedDate(pdfUrl);
-    }
-
-    async function updatePdfAges() {
-        const pdfButtons = document.querySelectorAll(".gif-box[data-pdf-age]");
-
-        await Promise.all(
-            Array.from(pdfButtons).map(async button => {
-                const ageDisplay = button.querySelector(".pdf-age");
-                const pdfUrl = button.getAttribute("href");
-
-                if (!ageDisplay || !pdfUrl) return;
-
-                try {
-                    const modified = await getPdfModifiedDate(pdfUrl);
-
-                    if (modified && !isNaN(modified.getTime())) {
-                        ageDisplay.textContent = "modified " + formatPdfAge(modified);
-                    } else {
-                        ageDisplay.textContent = "PDF date unavailable";
-                    }
-                } catch (error) {
-                    ageDisplay.textContent = "PDF date unavailable";
-                }
-            })
-        );
-    }
-
-    window.addEventListener("load", updatePdfAges);
-
-    // Refresh the displayed age every minute while the page remains open.
-    setInterval(updatePdfAges, 60000);
-
 
     // RANDOM VIDEO SYSTEM
     const video = document.getElementById("bgVideo");
