@@ -646,8 +646,12 @@ text-transform: uppercase;
     });
 
     // PDF MODIFIED-AGE DISPLAY
-    // Reads the PDF's own embedded /ModDate metadata.
-    // This avoids relying on GitHub or the server's Last-Modified header.
+    // Uses GitHub's latest commit date for EACH individual PDF.
+    // This means every PDF button can show a different age.
+
+    const GITHUB_OWNER = "deanzale-at-sdlab";
+    const GITHUB_REPO = "SDLab-WebSite";
+    const GITHUB_BRANCH = "main";
 
     function formatPdfAge(modifiedTime) {
         const modified = new Date(modifiedTime);
@@ -659,7 +663,9 @@ text-transform: uppercase;
 
         let seconds = Math.floor((now - modified) / 1000);
 
-        if (seconds < 0) seconds = 0;
+        if (seconds < 0) {
+            seconds = 0;
+        }
 
         const minutes = Math.floor(seconds / 60);
         const hours = Math.floor(minutes / 60);
@@ -686,115 +692,86 @@ text-transform: uppercase;
         return minutes + (minutes === 1 ? " minute ago" : " minutes ago");
     }
 
-    function parsePdfDate(value) {
-        // PDF date format: D:YYYYMMDDHHmmSS+HH'mm'
-        // or:            D:YYYYMMDDHHmmSSZ
-        const match = value.match(
-            /D:(\d{4})(\d{2})?(\d{2})?(\d{2})?(\d{2})?(\d{2})?(Z|[+-]\d{2}'?\d{2}'?)?/
-        );
+    async function getGithubFileModifiedDate(filePath) {
+        // GitHub commits API filtered by the EXACT file path.
+        // The path is encoded so spaces/special characters are handled safely.
+        const encodedPath = filePath
+            .split("/")
+            .map(part => encodeURIComponent(part))
+            .join("/");
 
-        if (!match) return null;
+        const apiUrl =
+            "https://api.github.com/repos/" +
+            GITHUB_OWNER + "/" +
+            GITHUB_REPO +
+            "/commits?path=" +
+            encodedPath +
+            "&sha=" +
+            encodeURIComponent(GITHUB_BRANCH) +
+            "&per_page=1";
 
-        const year = Number(match[1]);
-        const month = Number(match[2] || 1) - 1;
-        const day = Number(match[3] || 1);
-        const hour = Number(match[4] || 0);
-        const minute = Number(match[5] || 0);
-        const second = Number(match[6] || 0);
-
-        let date = new Date(Date.UTC(year, month, day, hour, minute, second));
-
-        const zone = match[7];
-        if (zone && zone !== "Z") {
-            const zoneMatch = zone.match(/([+-])(\d{2})'?\s*(\d{2})'?/);
-            if (zoneMatch) {
-                const offsetMinutes =
-                    (Number(zoneMatch[2]) * 60 + Number(zoneMatch[3])) *
-                    (zoneMatch[1] === "+" ? 1 : -1);
-                date = new Date(date.getTime() - offsetMinutes * 60000);
-            }
-        }
-
-        return isNaN(date.getTime()) ? null : date;
-    }
-
-    async function getPdfEmbeddedModifiedDate(pdfUrl) {
-        const response = await fetch(pdfUrl + (pdfUrl.includes("?") ? "&" : "?") + "_pdfcheck=" + Date.now(), {
+        const response = await fetch(apiUrl, {
             method: "GET",
-            cache: "no-store"
+            cache: "no-store",
+            headers: {
+                "Accept": "application/vnd.github+json"
+            }
         });
 
-        if (!response.ok)
-            throw new Error("PDF could not be read");
-
-        const buffer = await response.arrayBuffer();
-        const bytes = new Uint8Array(buffer);
-
-        // Convert only the text-like PDF objects to a string.
-        // PDF metadata is normally stored in the first part of the file.
-        const sample = new TextDecoder("latin1").decode(bytes.slice(0, Math.min(bytes.length, 1000000)));
-
-        const matches = [
-            sample.match(/\/ModDate\s*\((D:[^)]*)\)/),
-            sample.match(/\/ModDate\s*<([0-9A-Fa-f]+)>/)
-        ];
-
-        if (matches[0]) {
-            return parsePdfDate(matches[0][1]);
+        if (!response.ok) {
+            throw new Error("GitHub API returned " + response.status);
         }
 
-        if (matches[1]) {
-            // UTF-16 hexadecimal PDF metadata, if present.
-            try {
-                const hex = matches[1][1];
-                let text = "";
-                for (let i = 0; i < hex.length; i += 2) {
-                    text += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-                }
-                const match = text.match(/D:\d{4}[^\x00]*/);
-                if (match) return parsePdfDate(match[0]);
-            } catch (e) {}
+        const commits = await response.json();
+
+        if (!Array.isArray(commits) || commits.length === 0) {
+            throw new Error("No GitHub commit found for " + filePath);
         }
 
-        return null;
-    }
+        const commitDate =
+            commits[0]?.commit?.committer?.date ||
+            commits[0]?.commit?.author?.date;
 
-    async function getPdfModifiedDate(pdfUrl) {
-        // First try the server's Last-Modified header.
-        try {
-            const head = await fetch(pdfUrl, {
-                method: "HEAD",
-                cache: "no-store"
-            });
+        if (!commitDate) {
+            throw new Error("No commit date found for " + filePath);
+        }
 
-            const lastModified = head.headers.get("Last-Modified");
-            if (lastModified) return new Date(lastModified);
-        } catch (e) {}
-
-        // If the server does not expose it, read the PDF's own metadata.
-        return await getPdfEmbeddedModifiedDate(pdfUrl);
+        return commitDate;
     }
 
     async function updatePdfAges() {
         const pdfButtons = document.querySelectorAll(".gif-box[data-pdf-age]");
 
+        // Each button is handled independently.
         await Promise.all(
-            Array.from(pdfButtons).map(async button => {
+            Array.from(pdfButtons).map(async (button) => {
                 const ageDisplay = button.querySelector(".pdf-age");
                 const pdfUrl = button.getAttribute("href");
 
-                if (!ageDisplay || !pdfUrl) return;
+                if (!ageDisplay || !pdfUrl)
+                    return;
 
                 try {
-                    const modified = await getPdfModifiedDate(pdfUrl);
+                    // Convert the site's relative PDF URL to the exact
+                    // repository path expected by GitHub.
+                    const url = new URL(pdfUrl, window.location.href);
+                    let filePath = url.pathname.replace(/^\/+/, "");
 
-                    if (modified && !isNaN(modified.getTime())) {
-                        ageDisplay.textContent = "modified " + formatPdfAge(modified);
-                    } else {
-                        ageDisplay.textContent = "PDF date unavailable";
-                    }
+                    // The website repository contains these files at its root.
+                    // Keep the exact path, including the "files/" directory.
+                    const modified = await getGithubFileModifiedDate(filePath);
+
+                    ageDisplay.textContent =
+                        "modified " + formatPdfAge(modified);
+
                 } catch (error) {
-                    ageDisplay.textContent = "PDF date unavailable";
+                    console.warn(
+                        "Could not get GitHub update time for:",
+                        pdfUrl,
+                        error
+                    );
+
+                    ageDisplay.textContent = "modified time unavailable";
                 }
             })
         );
