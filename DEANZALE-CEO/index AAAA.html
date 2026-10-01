@@ -646,24 +646,9 @@ text-transform: uppercase;
     });
 
     // PDF MODIFIED-AGE DISPLAY
-    // Gets the latest GitHub commit date for EACH individual PDF.
-    // The GitHub repository must contain the same files/paths as the website.
-    //
-    // IMPORTANT:
-    // The PDF is NOT downloaded or opened.
-    // GitHub's latest commit date for that individual PDF is used as
-    // the PDF's "last modified" time for this website display.
-    //
-    // Repository:
-    // https://github.com/SDLab-software/SDLab-2020-COMPANY-WebSite
-
-    const githubRepo = "SDLab-software/SDLab-2020-COMPANY-WebSite";
-
-    // Store the actual GitHub modification dates so that we only query
-    // GitHub once when the page loads. The displayed age can then be
-    // recalculated locally every minute without repeatedly hitting GitHub.
-    const pdfModifiedTimes = new Map();
-
+    // Uses GitHub's latest commit date for EACH individual PDF.
+    // It does NOT open or inspect the PDF itself.
+    // Repository: deanzale-at-sdlab/SDLab-WebSite
     function formatPdfAge(modifiedTime) {
         const modified = new Date(modifiedTime);
         const now = new Date();
@@ -703,8 +688,9 @@ text-transform: uppercase;
         return minutes + (minutes === 1 ? " minute ago" : " minutes ago");
     }
 
-    function refreshPdfAgeText() {
+    async function updatePdfAges() {
         const pdfButtons = document.querySelectorAll(".gif-box[data-pdf-age]");
+        const githubRepo = "deanzale-at-sdlab/SDLab-WebSite";
 
         for (const button of pdfButtons) {
             const ageDisplay = button.querySelector(".pdf-age");
@@ -713,32 +699,13 @@ text-transform: uppercase;
             if (!ageDisplay || !pdfUrl)
                 continue;
 
+            // Convert the website path, e.g. files/example.pdf,
+            // into the exact GitHub repository path.
             const githubPath = pdfUrl.replace(/^\.\//, "");
-            const modified = pdfModifiedTimes.get(githubPath);
-
-            if (modified) {
-                ageDisplay.textContent = "updated " + formatPdfAge(modified);
-            }
-        }
-    }
-
-    async function getPdfModifiedTimes() {
-        const pdfButtons = document.querySelectorAll(".gif-box[data-pdf-age]");
-
-        for (const button of pdfButtons) {
-            const ageDisplay = button.querySelector(".pdf-age");
-            const pdfUrl = button.getAttribute("href");
-
-            if (!ageDisplay || !pdfUrl)
-                continue;
-
-            const githubPath = pdfUrl.replace(/^\.\//, "");
-
             const apiUrl =
                 "https://api.github.com/repos/" +
                 githubRepo +
-                "/commits?path=" +
-                encodeURIComponent(githubPath) +
+                "/commits?path=" + encodeURIComponent(githubPath) +
                 "&per_page=1";
 
             try {
@@ -756,39 +723,27 @@ text-transform: uppercase;
 
                 const commits = await response.json();
                 const latestCommit = commits && commits[0];
-
-                const modified =
-                    latestCommit &&
+                const modified = latestCommit &&
                     latestCommit.commit &&
                     latestCommit.commit.committer &&
                     latestCommit.commit.committer.date;
 
                 if (modified) {
-                    pdfModifiedTimes.set(githubPath, modified);
-                    ageDisplay.textContent =
-                        "updated " + formatPdfAge(modified);
+                    ageDisplay.textContent = "updated " + formatPdfAge(modified);
                 } else {
                     ageDisplay.textContent = "update time unavailable";
                 }
-
             } catch (error) {
-                console.warn(
-                    "Could not get GitHub update time for",
-                    githubPath,
-                    error
-                );
-
+                console.warn("Could not get GitHub update time for", githubPath, error);
                 ageDisplay.textContent = "update time unavailable";
             }
         }
     }
 
-    // Get the actual PDF modification dates once when the page loads.
-    window.addEventListener("load", getPdfModifiedTimes);
+    window.addEventListener("load", updatePdfAges);
 
-    // Recalculate "X minutes/hours/days ago" every minute.
-    // This does NOT make another GitHub API request.
-    setInterval(refreshPdfAgeText, 60000);
+    // Refresh the displayed age every minute while the page remains open.
+    setInterval(updatePdfAges, 60000);
 
 
     // RANDOM VIDEO SYSTEM
