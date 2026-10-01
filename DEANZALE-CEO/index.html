@@ -645,150 +645,124 @@ text-transform: uppercase;
 
     });
 
-    // PDF MODIFIED-AGE DISPLAY
-    // Gets the latest GitHub commit date for EACH individual PDF.
-    // The GitHub repository must contain the same files/paths as the website.
-    //
-    // IMPORTANT:
-    // The PDF is NOT downloaded or opened.
-    // GitHub's latest commit date for that individual PDF is used as
-    // the PDF's "last modified" time for this website display.
-    //
-    // Repository:
-    // https://github.com/SDLab-software/SDLab-2020-COMPANY-WebSite
 
-    const githubRepo = "SDLab-software/SDLab-2020-COMPANY-WebSite";
 
-    // Store the actual GitHub modification dates so that we only query
-    // GitHub once when the page loads. The displayed age can then be
-    // recalculated locally every minute without repeatedly hitting GitHub.
-    const pdfModifiedTimes = new Map();
 
-    function formatPdfAge(modifiedTime) {
-        const modified = new Date(modifiedTime);
-        const now = new Date();
 
-        if (isNaN(modified.getTime())) {
-            return "update time unavailable";
-        }
 
-        let seconds = Math.floor((now - modified) / 1000);
 
-        if (seconds < 0) {
-            seconds = 0;
-        }
 
-        const minutes = Math.floor(seconds / 60);
-        const hours = Math.floor(minutes / 60);
-        const days = Math.floor(hours / 24);
-        const weeks = Math.floor(days / 7);
-        const months = Math.floor(days / 30);
-        const years = Math.floor(days / 365);
+// PDF MODIFIED-AGE DISPLAY
+// Reads the PDF's Last-Modified HTTP header directly
+// from the web server hosting the PDF.
+// NO GITHUB IS USED.
 
-        if (years > 0)
-            return years + (years === 1 ? " year ago" : " years ago");
+function formatPdfAge(modifiedTime) {
+    const modified = new Date(modifiedTime);
+    const now = new Date();
 
-        if (months > 0)
-            return months + (months === 1 ? " month ago" : " months ago");
-
-        if (weeks > 0)
-            return weeks + (weeks === 1 ? " week ago" : " weeks ago");
-
-        if (days > 0)
-            return days + (days === 1 ? " day ago" : " days ago");
-
-        if (hours > 0)
-            return hours + (hours === 1 ? " hour ago" : " hours ago");
-
-        return minutes + (minutes === 1 ? " minute ago" : " minutes ago");
+    if (isNaN(modified.getTime())) {
+        return "update time unavailable";
     }
 
-    function refreshPdfAgeText() {
-        const pdfButtons = document.querySelectorAll(".gif-box[data-pdf-age]");
+    let seconds = Math.floor((now - modified) / 1000);
 
-        for (const button of pdfButtons) {
-            const ageDisplay = button.querySelector(".pdf-age");
-            const pdfUrl = button.getAttribute("href");
+    if (seconds < 0)
+        seconds = 0;
 
-            if (!ageDisplay || !pdfUrl)
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const weeks = Math.floor(days / 7);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(days / 365);
+
+    if (years > 0)
+        return years + (years === 1 ? " year ago" : " years ago");
+
+    if (months > 0)
+        return months + (months === 1 ? " month ago" : " months ago");
+
+    if (weeks > 0)
+        return weeks + (weeks === 1 ? " week ago" : " weeks ago");
+
+    if (days > 0)
+        return days + (days === 1 ? " day ago" : " days ago");
+
+    if (hours > 0)
+        return hours + (hours === 1 ? " hour ago" : " hours ago");
+
+    return minutes + (minutes === 1 ? " minute ago" : " minutes ago");
+}
+
+
+async function updatePdfAges() {
+
+    const pdfButtons =
+        document.querySelectorAll(".gif-box[data-pdf-age]");
+
+    for (const button of pdfButtons) {
+
+        const ageDisplay =
+            button.querySelector(".pdf-age");
+
+        const pdfUrl =
+            button.getAttribute("href");
+
+        if (!ageDisplay || !pdfUrl)
+            continue;
+
+        try {
+
+            const response = await fetch(pdfUrl, {
+                method: "HEAD",
+                cache: "no-store"
+            });
+
+            if (!response.ok)
+                throw new Error("HTTP " + response.status);
+
+            const modified =
+                response.headers.get("Last-Modified");
+
+            if (!modified) {
+
+                ageDisplay.textContent =
+                    "modified time unavailable";
+
                 continue;
-
-            const githubPath = pdfUrl.replace(/^\.\//, "");
-            const modified = pdfModifiedTimes.get(githubPath);
-
-            if (modified) {
-                ageDisplay.textContent = "updated " + formatPdfAge(modified);
             }
+
+            ageDisplay.textContent =
+                "updated " + formatPdfAge(modified);
+
+        } catch (error) {
+
+            console.warn(
+                "Could not read PDF modified time:",
+                pdfUrl,
+                error
+            );
+
+            ageDisplay.textContent =
+                "modified time unavailable";
         }
     }
+}
 
-    async function getPdfModifiedTimes() {
-        const pdfButtons = document.querySelectorAll(".gif-box[data-pdf-age]");
 
-        for (const button of pdfButtons) {
-            const ageDisplay = button.querySelector(".pdf-age");
-            const pdfUrl = button.getAttribute("href");
+window.addEventListener("load", updatePdfAges);
 
-            if (!ageDisplay || !pdfUrl)
-                continue;
 
-            const githubPath = pdfUrl.replace(/^\.\//, "");
+// Refresh the displayed age every minute.
+setInterval(updatePdfAges, 60000);
 
-            const apiUrl =
-                "https://api.github.com/repos/" +
-                githubRepo +
-                "/commits?path=" +
-                encodeURIComponent(githubPath) +
-                "&per_page=1";
 
-            try {
-                const response = await fetch(apiUrl, {
-                    method: "GET",
-                    cache: "no-store",
-                    headers: {
-                        "Accept": "application/vnd.github+json"
-                    }
-                });
 
-                if (!response.ok) {
-                    throw new Error("GitHub API returned " + response.status);
-                }
 
-                const commits = await response.json();
-                const latestCommit = commits && commits[0];
 
-                const modified =
-                    latestCommit &&
-                    latestCommit.commit &&
-                    latestCommit.commit.committer &&
-                    latestCommit.commit.committer.date;
 
-                if (modified) {
-                    pdfModifiedTimes.set(githubPath, modified);
-                    ageDisplay.textContent =
-                        "updated " + formatPdfAge(modified);
-                } else {
-                    ageDisplay.textContent = "update time unavailable";
-                }
 
-            } catch (error) {
-                console.warn(
-                    "Could not get GitHub update time for",
-                    githubPath,
-                    error
-                );
-
-                ageDisplay.textContent = "update time unavailable";
-            }
-        }
-    }
-
-    // Get the actual PDF modification dates once when the page loads.
-    window.addEventListener("load", getPdfModifiedTimes);
-
-    // Recalculate "X minutes/hours/days ago" every minute.
-    // This does NOT make another GitHub API request.
-    setInterval(refreshPdfAgeText, 60000);
 
 
     // RANDOM VIDEO SYSTEM
