@@ -645,178 +645,124 @@ text-transform: uppercase;
 
     });
 
-    // PDF INFORMATION DISPLAY
-    //
-    // For each PDF in the TOP GIF ROW, the website looks for
-    // a matching TXT file with the same name.
-    //
-    // Example:
-    //     files/example.pdf
-    //     files/example.txt
-    //
-    // TXT FILE:
-    //     Line 1 = AHK A_Now modification date/time
-    //     Line 2 = person's name
-    //     Line 3 = file description
-    //
-    // If the TXT file exists:
-    //     Line 2 replaces the main GIF text.
-    //     Line 1 is converted into a duration from now.
-    //
-    // If the TXT file does NOT exist:
-    //     The original HTML text remains unchanged.
 
-    function formatPdfAgeFromAHK(ahkTime) {
 
-        // AHK A_Now format:
-        // YYYYMMDDHH24MISS
-        // Example: 20241211141826
 
-        if (!/^\d{14}$/.test(ahkTime)) {
-            return "update time unavailable";
-        }
 
-        const year =
-            parseInt(ahkTime.substring(0, 4), 10);
 
-        const month =
-            parseInt(ahkTime.substring(4, 6), 10) - 1;
 
-        const day =
-            parseInt(ahkTime.substring(6, 8), 10);
 
-        const hour =
-            parseInt(ahkTime.substring(8, 10), 10);
+// PDF MODIFIED-AGE DISPLAY
+// Reads the PDF's Last-Modified HTTP header directly
+// from the web server hosting the PDF.
+// NO GITHUB IS USED.
 
-        const minute =
-            parseInt(ahkTime.substring(10, 12), 10);
+function formatPdfAge(modifiedTime) {
+    const modified = new Date(modifiedTime);
+    const now = new Date();
 
-        const second =
-            parseInt(ahkTime.substring(12, 14), 10);
-
-        // AHK A_Now is local time, so construct local browser time.
-        const modified =
-            new Date(year, month, day, hour, minute, second);
-
-        if (isNaN(modified.getTime())) {
-            return "update time unavailable";
-        }
-
-        const now = new Date();
-
-        let seconds =
-            Math.floor((now - modified) / 1000);
-
-        if (seconds < 0) {
-            seconds = 0;
-        }
-
-        const minutes = Math.floor(seconds / 60);
-        const hours = Math.floor(minutes / 60);
-        const days = Math.floor(hours / 24);
-        const weeks = Math.floor(days / 7);
-        const months = Math.floor(days / 30);
-        const years = Math.floor(days / 365);
-
-        if (years > 0)
-            return years + (years === 1 ? " year ago" : " years ago");
-
-        if (months > 0)
-            return months + (months === 1 ? " month ago" : " months ago");
-
-        if (weeks > 0)
-            return weeks + (weeks === 1 ? " week ago" : " weeks ago");
-
-        if (days > 0)
-            return days + (days === 1 ? " day ago" : " days ago");
-
-        if (hours > 0)
-            return hours + (hours === 1 ? " hour ago" : " hours ago");
-
-        return minutes + (minutes === 1 ? " minute ago" : " minutes ago");
+    if (isNaN(modified.getTime())) {
+        return "update time unavailable";
     }
 
-    async function updatePdfInformation() {
+    let seconds = Math.floor((now - modified) / 1000);
 
-        const pdfButtons =
-            document.querySelectorAll(".gif-box[data-pdf-age]");
+    if (seconds < 0)
+        seconds = 0;
 
-        for (const button of pdfButtons) {
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const weeks = Math.floor(days / 7);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(days / 365);
 
-            const pdfUrl =
-                button.getAttribute("href");
+    if (years > 0)
+        return years + (years === 1 ? " year ago" : " years ago");
 
-            const nameDisplay =
-                button.querySelector(".gif-label");
+    if (months > 0)
+        return months + (months === 1 ? " month ago" : " months ago");
 
-            const ageDisplay =
-                button.querySelector(".pdf-age");
+    if (weeks > 0)
+        return weeks + (weeks === 1 ? " week ago" : " weeks ago");
 
-            if (!pdfUrl || !nameDisplay || !ageDisplay)
+    if (days > 0)
+        return days + (days === 1 ? " day ago" : " days ago");
+
+    if (hours > 0)
+        return hours + (hours === 1 ? " hour ago" : " hours ago");
+
+    return minutes + (minutes === 1 ? " minute ago" : " minutes ago");
+}
+
+
+async function updatePdfAges() {
+
+    const pdfButtons =
+        document.querySelectorAll(".gif-box[data-pdf-age]");
+
+    for (const button of pdfButtons) {
+
+        const ageDisplay =
+            button.querySelector(".pdf-age");
+
+        const pdfUrl =
+            button.getAttribute("href");
+
+        if (!ageDisplay || !pdfUrl)
+            continue;
+
+        try {
+
+            const response = await fetch(pdfUrl, {
+                method: "HEAD",
+                cache: "no-store"
+            });
+
+            if (!response.ok)
+                throw new Error("HTTP " + response.status);
+
+            const modified =
+                response.headers.get("Last-Modified");
+
+            if (!modified) {
+
+                ageDisplay.textContent =
+                    "modified time unavailable";
+
                 continue;
-
-            // Convert the PDF URL into the matching TXT URL.
-            // files/example.pdf -> files/example.txt
-            const txtUrl =
-                pdfUrl.replace(/\.pdf$/i, ".txt");
-
-            try {
-
-                const response =
-                    await fetch(txtUrl, {
-                        method: "GET",
-                        cache: "no-store"
-                    });
-
-                // No matching TXT file = leave the original
-                // HTML text exactly as it was.
-                if (!response.ok) {
-                    continue;
-                }
-
-                const text =
-                    await response.text();
-
-                const lines =
-                    text.split(/\r?\n/);
-
-                const modifiedTime =
-                    (lines[0] || "").trim();
-
-                const personName =
-                    (lines[1] || "").trim();
-
-                // Line 2 = person's name.
-                // Replace the original main GIF text.
-                if (personName) {
-                    nameDisplay.textContent = personName;
-                }
-
-                // Line 1 = AHK A_Now date/time.
-                // Display the elapsed duration from that time until now.
-                if (modifiedTime) {
-                    ageDisplay.textContent =
-                        "updated " + formatPdfAgeFromAHK(modifiedTime);
-                }
-
-            } catch (error) {
-
-                console.warn(
-                    "Could not read PDF information file:",
-                    txtUrl,
-                    error
-                );
-
-                // Leave the original HTML text unchanged.
             }
+
+            ageDisplay.textContent =
+                "updated " + formatPdfAge(modified);
+
+        } catch (error) {
+
+            console.warn(
+                "Could not read PDF modified time:",
+                pdfUrl,
+                error
+            );
+
+            ageDisplay.textContent =
+                "modified time unavailable";
         }
     }
+}
 
-    // Read the TXT files when the page loads.
-    window.addEventListener("load", updatePdfInformation);
 
-    // Refresh the displayed durations every minute.
-    setInterval(updatePdfInformation, 60000);
+window.addEventListener("load", updatePdfAges);
+
+
+// Refresh the displayed age every minute.
+setInterval(updatePdfAges, 60000);
+
+
+
+
+
+
+
 
 
     // RANDOM VIDEO SYSTEM
