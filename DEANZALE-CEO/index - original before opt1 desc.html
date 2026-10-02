@@ -555,70 +555,57 @@ html, body {
         });
     });
 
+    async function updatePdfInformation() {
+        const pdfButtons = document.querySelectorAll(".gif-box[data-pdf-age]");
 
+        for (const button of pdfButtons) {
+            const pdfUrl = button.getAttribute("href");
+            const nameDisplay = button.querySelector(".gif-label");
+            const ageDisplay = button.querySelector(".pdf-age");
 
+            if (!pdfUrl || !nameDisplay || !ageDisplay) continue;
 
+            const txtUrl = pdfUrl.replace(/\.pdf$/i, ".txt");
 
-async function updatePdfInformation() {
-    const pdfButtons = document.querySelectorAll(".gif-box[data-pdf-age]");
+            try {
+                const response = await fetch(txtUrl, {
+                    method: "GET",
+                    cache: "no-store"
+                });
 
-    for (const button of pdfButtons) {
-        const pdfUrl = button.getAttribute("href");
-        const nameDisplay = button.querySelector(".gif-label");
-        const ageDisplay = button.querySelector(".pdf-age");
-        const descriptionDisplay = button.querySelector(".pdf-description-tooltip");
+                if (!response.ok) {
+                    continue;
+                }
 
-        if (!pdfUrl || !descriptionDisplay) continue;
+                const text = await response.text();
+                const lines = text.split(/\r?\n/);
 
-        const txtUrl = pdfUrl.replace(/\.pdf$/i, ".txt");
+                const modifiedTime = (lines[0] || "").trim();
+                const personName = (lines[1] || "").trim();
+                const fileDesc = (lines[2] || "").trim();
 
-        try {
-            const response = await fetch(txtUrl, {
-                method: "GET",
-                cache: "no-store"
-            });
+                if (personName) {
+                    nameDisplay.textContent = personName;
+                }
 
-            if (!response.ok) {
-                descriptionDisplay.textContent = "Description unavailable.";
-                continue;
+                if (modifiedTime) {
+                    ageDisplay.textContent = formatPdfAgeFromAHK(modifiedTime);
+                }
+
+                const descriptionDisplay = button.querySelector(".pdf-description-tooltip");
+
+                if (descriptionDisplay) {
+                    descriptionDisplay.textContent = fileDesc || "No description available.";
+                }
+
+                // Keep the native title empty so the custom tooltip is used instead.
+                button.removeAttribute("title");
+
+            } catch (error) {
+                console.warn("Could not read PDF information file:", txtUrl, error);
             }
-
-            const text = await response.text();
-            const lines = text.split(/\r?\n/);
-
-            const modifiedTime = (lines[0] || "").trim();
-            const personName = (lines[1] || "").trim();
-            const fileDesc = (lines[2] || "").trim();
-
-            if (personName && nameDisplay) {
-                nameDisplay.textContent = personName;
-            }
-
-            if (modifiedTime && ageDisplay) {
-                ageDisplay.textContent = formatPdfAgeFromAHK(modifiedTime);
-            }
-
-            descriptionDisplay.textContent =
-                fileDesc || "No description available.";
-
-            // Keep the native title empty so the custom tooltip is used instead.
-            button.removeAttribute("title");
-
-        } catch (error) {
-            console.warn(
-                "Could not read PDF information file:",
-                txtUrl,
-                error
-            );
-
-            descriptionDisplay.textContent = "Description unavailable.";
         }
     }
-}
-
-
-
-
 
     window.addEventListener("load", () => {
         setupPdfDescriptionTooltips();
