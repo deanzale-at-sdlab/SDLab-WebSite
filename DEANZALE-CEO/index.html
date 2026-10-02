@@ -149,6 +149,40 @@ html, body {
          0 2px 4px rgba(0,0,0,0.95);
 }
 
+
+.pdf-description-tooltip {
+    position: fixed;
+    display: none;
+    max-width: 520px;
+    padding: 12px 16px;
+    box-sizing: border-box;
+    background: rgba(0, 0, 0, 0.94);
+    border: 1px solid rgba(57, 255, 20, 0.65);
+    border-radius: 8px;
+    color: #39ff14;
+    font-family: Tahoma, Verdana, "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 400;
+    text-align: center;
+    white-space: normal;
+    z-index: 20000;
+    pointer-events: none;
+    box-shadow:
+        0 0 8px rgba(57, 255, 20, 0.25),
+        0 4px 18px rgba(0, 0, 0, 0.9);
+    text-shadow:
+        1px 1px 2px rgba(0, 0, 0, 0.95);
+}
+
+.gif-box[data-pdf-age]:hover {
+     z-index: 30000;
+ }
+
+.gif-box[data-pdf-age]:hover .pdf-description-tooltip {
+    display: block;
+}
+
 @keyframes redGlowPulse {
     0% {
         text-shadow:
@@ -310,6 +344,7 @@ html, body {
     <div class="gif-row">
 
         <a class="gif-box" href="files/deanz_email_me.pdf" target="_blank" data-pdf-age title="Loading description...">
+            <div class="pdf-description-tooltip">Loading description...</div>
             <img data-src="gifs/gif1.gif">
             <div class="gif-label">EMAIL me...</div>
         </a>
@@ -325,30 +360,35 @@ html, body {
         </a>
 
         <a class="gif-box" href="files/deanz_detailed_live_journal.pdf" target="_blank" data-pdf-age title="Loading description...">
+            <div class="pdf-description-tooltip">Loading description...</div>
             <img data-src="gifs/gif4.gif">
             <div class="gif-label">'Live' JOURNAL</div>
             <div class="pdf-age">checking modified time...</div>
         </a>
 
         <a class="gif-box" href="files/PERSON-1-MEETING_with_dean_zale.pdf" target="_blank" data-pdf-age title="Loading description...">
+            <div class="pdf-description-tooltip">Loading description...</div>
             <img data-src="gifs/gif5.gif">
             <div class="gif-label">PERSON 'ONE'</div>
             <div class="pdf-age">checking modified time...</div>
         </a>
 
         <a class="gif-box" href="files/PERSON-2-MEETING_with_dean_zale.pdf" target="_blank" data-pdf-age title="Loading description...">
+            <div class="pdf-description-tooltip">Loading description...</div>
             <img data-src="gifs/gif6.gif">
             <div class="gif-label">PERSON 'TWO'</div>
             <div class="pdf-age">checking modified time...</div>
         </a>
 
         <a class="gif-box" href="files/PERSON-3-MEETING_with_dean_zale.pdf" target="_blank" data-pdf-age title="Loading description...">
+            <div class="pdf-description-tooltip">Loading description...</div>
             <img data-src="gifs/gif7.gif">
             <div class="gif-label">PERSON 'THREE'</div>
             <div class="pdf-age">checking modified time...</div>
         </a>
             
         <a class="gif-box" href="files/PERSON-4-MEETING_with_dean_zale.pdf" target="_blank" data-pdf-age title="Loading description...">
+            <div class="pdf-description-tooltip">Loading description...</div>
             <img data-src="gifs/gif7.gif">
             <div class="gif-label">PERSON 'FOUR'</div>
             <div class="pdf-age">checking modified time...</div>
@@ -455,6 +495,66 @@ html, body {
         return minutes + (minutes === 1 ? " minute ago" : " minutes ago");
     }
 
+
+    function positionPdfDescriptionTooltip(button) {
+        const tooltip = button.querySelector(".pdf-description-tooltip");
+        if (!tooltip) return;
+
+        const rect = button.getBoundingClientRect();
+        const gap = 12;
+
+        tooltip.style.display = "block";
+        tooltip.style.left = "0px";
+        tooltip.style.top = "0px";
+
+        const tooltipRect = tooltip.getBoundingClientRect();
+
+        let left = rect.left + (rect.width - tooltipRect.width) / 2;
+        let top = rect.bottom + gap;
+
+        // Keep the tooltip inside the browser window horizontally.
+        left = Math.max(8, Math.min(left, window.innerWidth - tooltipRect.width - 8));
+
+        // If there isn't enough room below, place it above the button.
+        if (top + tooltipRect.height > window.innerHeight - 8) {
+            top = rect.top - tooltipRect.height - gap;
+        }
+
+        top = Math.max(8, top);
+
+        tooltip.style.left = left + "px";
+        tooltip.style.top = top + "px";
+    }
+
+    function setupPdfDescriptionTooltips() {
+        const pdfButtons = document.querySelectorAll(".gif-box[data-pdf-age]");
+
+        pdfButtons.forEach(button => {
+            if (button.dataset.tooltipReady === "true") return;
+
+            button.dataset.tooltipReady = "true";
+
+            button.addEventListener("mouseenter", () => {
+                positionPdfDescriptionTooltip(button);
+            });
+
+            button.addEventListener("mousemove", () => {
+                positionPdfDescriptionTooltip(button);
+            });
+
+            button.addEventListener("mouseleave", () => {
+                const tooltip = button.querySelector(".pdf-description-tooltip");
+                if (tooltip) tooltip.style.display = "none";
+            });
+        });
+    }
+
+    window.addEventListener("resize", () => {
+        document.querySelectorAll(".gif-box[data-pdf-age]:hover").forEach(button => {
+            positionPdfDescriptionTooltip(button);
+        });
+    });
+
     async function updatePdfInformation() {
         const pdfButtons = document.querySelectorAll(".gif-box[data-pdf-age]");
 
@@ -492,9 +592,14 @@ html, body {
                     ageDisplay.textContent = formatPdfAgeFromAHK(modifiedTime);
                 }
 
-                if (fileDesc) {
-                    button.setAttribute("title", fileDesc);
+                const descriptionDisplay = button.querySelector(".pdf-description-tooltip");
+
+                if (descriptionDisplay) {
+                    descriptionDisplay.textContent = fileDesc || "No description available.";
                 }
+
+                // Keep the native title empty so the custom tooltip is used instead.
+                button.removeAttribute("title");
 
             } catch (error) {
                 console.warn("Could not read PDF information file:", txtUrl, error);
@@ -502,7 +607,10 @@ html, body {
         }
     }
 
-    window.addEventListener("load", updatePdfInformation);
+    window.addEventListener("load", () => {
+        setupPdfDescriptionTooltips();
+        updatePdfInformation();
+    });
     setInterval(updatePdfInformation, 60000);
 
     // RANDOM VIDEO SYSTEM
