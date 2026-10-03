@@ -402,7 +402,7 @@ html, body {
             SDLab 2020™
         </a>
 
-        <div class="meeting-subtitle">
+        <div class="meeting-subtitle" id="meetingSubtitle">
            Founder: DEAN ZALE — Head of Research & Design | 'Person 1' Meeting
         </div>
 
@@ -558,11 +558,9 @@ html, body {
     });
 
 
-
-
-
 async function updatePdfInformation() {
     const pdfButtons = document.querySelectorAll(".gif-box[data-pdf-age]");
+    const subtitleElement = document.getElementById("meetingSubtitle");
 
     for (const button of pdfButtons) {
         const pdfUrl = button.getAttribute("href");
@@ -596,6 +594,11 @@ async function updatePdfInformation() {
                 nameDisplay.textContent = personName;
             }
 
+            // Dynamically update the page subtitle using the second line of the Person 1 meeting file
+            if (pdfUrl.includes("PERSON-1-MEETING") && personName && subtitleElement) {
+                subtitleElement.textContent = `Founder: DEAN ZALE — Head of Research & Design | '${personName}' Meeting Document`;
+            }
+
             if (modifiedTime && ageDisplay) {
                 ageDisplay.textContent = formatPdfAgeFromAHK(modifiedTime);
             }
@@ -617,9 +620,6 @@ async function updatePdfInformation() {
         }
     }
 }
-
-
-
 
 
     window.addEventListener("load", () => {

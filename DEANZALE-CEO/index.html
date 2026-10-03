@@ -573,7 +573,8 @@ async function updatePdfInformation() {
         const txtUrl = pdfUrl.replace(/\.pdf$/i, ".txt");
 
         try {
-            const response = await fetch(txtUrl, {
+            // Added cache-busting parameter (?t=...) so the browser always pulls the latest timestamp
+            const response = await fetch(txtUrl + "?t=" + Date.now(), {
                 method: "GET",
                 cache: "no-store"
             });
@@ -596,7 +597,7 @@ async function updatePdfInformation() {
 
             // Dynamically update the page subtitle using the second line of the Person 1 meeting file
             if (pdfUrl.includes("PERSON-1-MEETING") && personName && subtitleElement) {
-                subtitleElement.textContent = `Founder: DEAN ZALE — Head of Research & Design | '${personName}' Meeting`;
+                subtitleElement.textContent = `Founder: DEAN ZALE — Head of Research & Design | '${personName}' Meeting Document`;
             }
 
             if (modifiedTime && ageDisplay) {
